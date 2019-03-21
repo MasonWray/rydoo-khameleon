@@ -14,7 +14,7 @@ define("PONUM", 42);
 
 // Print header
 print("Rydoo -> Khameleon DFCS\n");
-print("Mason Wray 2019 - v0.2a\n");
+print("Mason Wray 2019 - v0.3a\n");
 print("\n");
 
 // Verify data directories
@@ -27,7 +27,7 @@ if(!file_exists($dir_out)){
 }
 
 // Search directory for XLSX files
-printf("Searching '%s' for Rydoo data files...\n", $dir_in);
+printf("Searching '%s' for Rydoo data files.\n", $dir_in);
 $dir = scandir($dir_in);
 $files = array();
 foreach($dir as $file){
@@ -43,20 +43,24 @@ foreach($dir as $file){
             && $head[AMOUNT] == 'Amount '
             && $head[PONUM] == 'Project Order #'){
                 array_push($files, $file);
-
+                printf("  %32s - OK\n", $file);
             }
             else{
+                printf("  %32s - INVALID HEADER\n", $file);
             }
         }
     }
 }
-printf("Discovered %d file(s).\n\n", sizeof($files));
+print("\n");
+printf("Discovered %d file(s).\n", sizeof($files));
 
 // Extract data from XLSX files
 // iterate through files in directory
 foreach($files as $file){
-    $date_statement = readline("Statement date: ");
-    $date_accounting = readline("Accounting date: ");
+    print("\n");
+    printf("Manual date entry required for file '%s'\n", $file);
+    $date_statement = readline("  Statement date: ");
+    $date_accounting = readline("  Accounting date: ");
     $xlsx = new XLSXReader($dir_in . "\\" . $file);
     $data = $xlsx->getSheetData('Pigott');
     $out = "";
@@ -67,9 +71,10 @@ foreach($files as $file){
     }
 
     write($dir_out, pathinfo($file, PATHINFO_FILENAME), $out);
-    // print($out);
 }
 
+print("\n");
+printf("Wrote %d file(s) to %s\n", sizeof($files), $dir_out);
 readline("Press 'enter' to close the application.");
 
 // Mapping function
