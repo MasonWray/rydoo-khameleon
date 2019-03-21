@@ -1,53 +1,89 @@
 <?php
 require('XLSXReader.php');
 $root = dirname(__FILE__);
+$dir_in = $root . '\\' . 'in';
+$dir_out = $root . '\\' . 'out';
+
+// Define column numbers
+define("BRANCH_ID", 46);
+define("GROUP_ID", 36);
+define("CATEGORY", 18);
+define("NAME", 28);
+define("AMOUNT", 12);
+define("PONUM", 42);
 
 // Print header
 print("Rydoo -> Khameleon DFCS\n");
-print("Mason Wray 2019 - v0.1a\n");
+print("Mason Wray 2019 - v0.2a\n");
 print("\n");
 
+// Verify data directories
+if(!file_exists($dir_in)){
+    mkdir($dir_in);
+}
+
+if(!file_exists($dir_out)){
+    mkdir($dir_out);
+}
+
 // Search directory for XLSX files
-print("Searching script directory for Rydoo data files...");
-$dir = scandir($root);
+printf("Searching '%s' for Rydoo data files...\n", $dir_in);
+$dir = scandir($dir_in);
 $files = array();
 foreach($dir as $file){
     if(pathinfo($file, PATHINFO_EXTENSION) == "xlsx"){
-        $xlsx = new XLSXReader($root . "\\" . $file);
+        $xlsx = new XLSXReader($dir_in . "\\" . $file);
         if(in_array("Pigott", $xlsx->getSheetNames())){
             $data = $xlsx->getSheetData('Pigott');
             $head = $data[0];
-            if($head[45] === 'Branch ID ' && $head[36] == 'GroupId ' && $head[18] == 'Category number ' && $head[12] == 'Amount ' && $head[15] == 'Date completed '){
+            if($head[BRANCH_ID] === 'Branch ID ' 
+            && $head[GROUP_ID] == 'GroupId ' 
+            && $head[CATEGORY] == 'Category number '
+            && $head[NAME] == 'Employee '
+            && $head[AMOUNT] == 'Amount '
+            && $head[PONUM] == 'Project Order #'){
                 array_push($files, $file);
+
+            }
+            else{
             }
         }
     }
 }
-print("done.\n");
-// var_dump($files);
+printf("Discovered %d file(s).\n\n", sizeof($files));
 
 // Extract data from XLSX files
-print("Writing new data...");
 // iterate through files in directory
 foreach($files as $file){
-    $xlsx = new XLSXReader($root . "\\" . $file);
+    $date_statement = readline("Statement date: ");
+    $date_accounting = readline("Accounting date: ");
+    $xlsx = new XLSXReader($dir_in . "\\" . $file);
     $data = $xlsx->getSheetData('Pigott');
     $out = "";
     // iterate through lines in file
     for($i = 1; $i < sizeof($data); $i++){
         $line_in = $data[$i];
-        $out = $out . khamline($line_in[45], $line_in[36], $line_in[18], "s_desc", "l_desc", $line_in[12], $line_in[15]);
+        $out = $out . khamline($line_in[BRANCH_ID], $line_in[GROUP_ID], $line_in[CATEGORY], $line_in[NAME], $date_statement, $date_accounting, $line_in[AMOUNT]);
     }
 
-    write($root, pathinfo($file, PATHINFO_FILENAME), $out);
+    write($dir_out, pathinfo($file, PATHINFO_FILENAME), $out);
     // print($out);
 }
-print("done\n");
+
+readline("Press 'enter' to close the application.");
 
 // Mapping function
-function khamline($branch_id, $group_id, $category, $desc_short, $desc_long, $amount, $date){
+function khamline($branch_id, $group_id, $category, $name, $stmt_date, $acct_date, $amount){
     $s_date = excdate($date);
-    return sprintf("517000000,%s,%s,%s,%s,%s,%s,1\n", $branch_id . $group_id, $category, $desc_short, $desc_long, $amount, $s_date);
+    $kham_id = "517000000";
+    $dept_id = $branch_id . $group_id;
+    $gl_id = $category;
+    $desc_short = explode(" ", $name)[0][0] . explode(" ", $name)[1] . " CC";
+    $desc_long = explode(" ", $name)[0][0] . explode(" ", $name)[1] . " CC " . $stmt_date;
+    $amount = $amount;
+    $acct_date = $acct_date;
+    $type = "1";
+    return sprintf("%s,%s,%s,%s,%s,%s,%s,%s\n", $kham_id, $dept_id, $gl_id, $desc_short, $desc_long, $amount, $acct_date, $type);
 }
 
 // CSV file write
