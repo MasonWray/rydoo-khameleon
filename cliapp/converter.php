@@ -79,6 +79,7 @@ readline("Press 'enter' to close the application.");
 
 // Mapping function
 function khamline($branch_id, $group_id, $category, $name, $stmt_date, $acct_date, $amount){
+    // map fields
     $s_date = excdate($date);
     $kham_id = "517000000";
     $dept_id = $branch_id . $group_id;
@@ -88,6 +89,16 @@ function khamline($branch_id, $group_id, $category, $name, $stmt_date, $acct_dat
     $amount = $amount;
     $acct_date = $acct_date;
     $type = "1";
+
+    // add GL special cases
+    if($gl_id == "147050"){
+        $desc_long = $desc_long . " Employee Rec"; 
+    }
+
+    if($gl_id == "210150"){
+        $dec_long = $desc_long . " proj 12345.001";
+    }
+
     return sprintf("%s,%s,%s,%s,%s,%s,%s,%s\n", $kham_id, $dept_id, $gl_id, $desc_short, $desc_long, $amount, $acct_date, $type);
 }
 
