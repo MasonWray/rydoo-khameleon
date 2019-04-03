@@ -43,10 +43,10 @@ foreach($dir as $file){
             && $head[AMOUNT] == 'Amount '
             && $head[PONUM] == 'Project Order #'){
                 array_push($files, $file);
-                printf("  %32s - OK\n", $file);
+                printf("  %-32s  OK\n", $file);
             }
             else{
-                printf("  %32s - INVALID HEADER\n", $file);
+                printf("  %-32s  INVALID HEADER\n", $file);
             }
         }
     }
