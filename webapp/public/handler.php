@@ -108,17 +108,4 @@ function excdate($input){
     date_add($exc_start, date_interval_create_from_date_string($days . " days"));
     return $exc_start->format('n/d/Y');
 }
-
-// if(TRUE){
-//     $filename = "dlfile.csv";
-//     $filebody = "c1r1,c2r1,c3r1\nc1r2,c2r2,c3r2\n";
-//     header('Content-Type: text/csv');
-//     header('Content-Disposition: attachment; filename="'. $filename .'"');
-//     flush();
-//     print $filebody;
-//     exit;
-// }
-// else{
-//     echo file_get_contents("./index.php");
-// }
 ?>
