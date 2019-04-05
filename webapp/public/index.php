@@ -1,60 +1,60 @@
-<?php
+<?php 
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 
-/**
- * Laravel - A PHP Framework For Web Artisans
- *
- * @package  Laravel
- * @author   Taylor Otwell <taylor@laravel.com>
- */
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Rydoo-Kham Converter </title>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <nav class="navbar navbar-light bg-light">
+            <span class="navbar-brand">
+                <img src="./assets/Pigott_Logo_BrightRed.png" height="30">
+            </span>
+        </nav>
+        <div class="container" style="padding-top: 50px;">
+            <!-- Title -->
+            <h2> Rydoo / Khameleon Converter </h2><br><br>
 
-define('LARAVEL_START', microtime(true));
+            <?php
+            if(isset($_SESSION['msg']) && strlen($_SESSION['msg']) > 0){
+                echo "<div class='alert alert-danger' role='alert'>" . $_SESSION['msg'] . "</div>";
+                $_SESSION['msg'] = "";
+                unset($_SESSION['msg']);
+            }
+            ?>
 
-/*
-|--------------------------------------------------------------------------
-| Register The Auto Loader
-|--------------------------------------------------------------------------
-|
-| Composer provides a convenient, automatically generated class loader for
-| our application. We just need to utilize it! We'll simply require it
-| into the script here so that we don't have to worry about manual
-| loading any of our classes later on. It feels great to relax.
-|
-*/
+            <form action="handler.php" method="POST" enctype = "multipart/form-data">
+                <!-- File -->
+                <div class="row">
+                    <div class="form-group col-sm">
+                        <label for="infile">Rydoo Data File</label>
+                        <input type="file" class="form-control-file" id="infile" name="infile">
+                    </div>
+                </div>
 
-require __DIR__.'/../vendor/autoload.php';
+                <!-- Dates -->
+                <div class="row"> 
+                    <div class="form-group col-sm-6">
+                        <label for="stmtDate">Statement Date</label>
+                        <input type="text" class="form-control" id="stmtDate" name="stmtDate" aria-describedby="stmtDate" placeholder="DD-MM-YYYY">
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <label for="acctDate">Accounting Date</label>
+                        <input type="text" class="form-control" id="acctDate" name="acctDate" aria-describedby="acctDate" placeholder="DD-MM-YYYY">
+                    </div>
+                </div>
 
-/*
-|--------------------------------------------------------------------------
-| Turn On The Lights
-|--------------------------------------------------------------------------
-|
-| We need to illuminate PHP development, so let us turn on the lights.
-| This bootstraps the framework and gets it ready for use, then it
-| will load up this application so that we can run it and send
-| the responses back to the browser and delight our users.
-|
-*/
-
-$app = require_once __DIR__.'/../bootstrap/app.php';
-
-/*
-|--------------------------------------------------------------------------
-| Run The Application
-|--------------------------------------------------------------------------
-|
-| Once we have the application, we can handle the incoming request
-| through the kernel, and send the associated response back to
-| the client's browser allowing them to enjoy the creative
-| and wonderful application we have prepared for them.
-|
-*/
-
-$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
-
-$response = $kernel->handle(
-    $request = Illuminate\Http\Request::capture()
-);
-
-$response->send();
-
-$kernel->terminate($request, $response);
+                <!-- Submit -->
+                <button type="submit" class="btn btn-primary"> Convert </button>
+            </form>
+        </div>
+    </body>
+</html>
