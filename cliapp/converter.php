@@ -5,12 +5,12 @@ $dir_in = $root . '\\' . 'in';
 $dir_out = $root . '\\' . 'out';
 
 // Define column numbers
-define("BRANCH_ID", 46);
-define("GROUP_ID", 36);
+define("AMOUNT", 12);
 define("CATEGORY", 18);
 define("NAME", 28);
-define("AMOUNT", 12);
+define("GROUP_ID", 36);
 define("PONUM", 42);
+define("BRANCH_ID", 47);
 
 // Print header
 print("Rydoo -> Khameleon DFCS\n");
@@ -46,7 +46,7 @@ foreach($dir as $file){
                 printf("  %-32s  OK\n", $file);
             }
             else{
-                printf("  %-32s  INVALID HEADER\n", $file);
+                printf("  %-32s  INVALID HEADER (Expected %s, found %s)\n", $file, "Branch ID", $head[BRANCH_ID]);
             }
         }
     }
