@@ -67,7 +67,7 @@ foreach($files as $file){
     // iterate through lines in file
     for($i = 1; $i < sizeof($data); $i++){
         $line_in = $data[$i];
-        $out = $out . khamline($line_in[BRANCH_ID], $line_in[GROUP_ID], $line_in[CATEGORY], $line_in[NAME], $date_statement, $date_accounting, $line_in[AMOUNT]);
+        $out = $out . khamline($line_in[BRANCH_ID], $line_in[GROUP_ID], $line_in[CATEGORY], $line_in[NAME], $date_statement, $date_accounting, $line_in[AMOUNT], $line_in[PONUM]);
     }
 
     write($dir_out, pathinfo($file, PATHINFO_FILENAME), $out);
@@ -78,7 +78,7 @@ printf("Wrote %d file(s) to %s\n", sizeof($files), $dir_out);
 readline("Press 'enter' to close the application.");
 
 // Mapping function
-function khamline($branch_id, $group_id, $category, $name, $stmt_date, $acct_date, $amount){
+function khamline($branch_id, $group_id, $category, $name, $stmt_date, $acct_date, $amount, $ponum){
     // map fields
     $s_date = excdate($date);
     $kham_id = "517000000";
@@ -96,7 +96,9 @@ function khamline($branch_id, $group_id, $category, $name, $stmt_date, $acct_dat
     }
 
     if($gl_id == "210150"){
-        $dec_long = $desc_long . " proj 12345.001";
+        // Add ACTUAL po# (Col. AQ)
+        $desc_long = sprintf("%s proj %s", $desc_long, $ponum);
+        // $desc_long = $desc_long . " proj 12345.001";
     }
 
     return sprintf("%s,%s,%s,%s,%s,%s,%s,%s\n", $kham_id, $dept_id, $gl_id, $desc_short, $desc_long, $amount, $acct_date, $type);
