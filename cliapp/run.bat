@@ -1,1 +1,2 @@
-php converter.php
+REM php converter.php
+php\php.exe converter.php

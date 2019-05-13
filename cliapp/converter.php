@@ -80,7 +80,7 @@ readline("Press 'enter' to close the application.");
 // Mapping function
 function khamline($branch_id, $group_id, $category, $name, $stmt_date, $acct_date, $amount, $ponum){
     // map fields
-    $s_date = excdate($date);
+    // $s_date = excdate($date);
     $kham_id = "517000000";
     $dept_id = $branch_id . $group_id;
     $gl_id = $category;
@@ -95,10 +95,10 @@ function khamline($branch_id, $group_id, $category, $name, $stmt_date, $acct_dat
         $desc_long = $desc_long . " Employee Rec"; 
     }
 
+    // add po number and strip dept_id for installers
     if($gl_id == "210150"){
-        // Add ACTUAL po# (Col. AQ)
         $desc_long = sprintf("%s proj %s", $desc_long, $ponum);
-        // $desc_long = $desc_long . " proj 12345.001";
+        $dept_id = 517000000;
     }
 
     return sprintf("%s,%s,%s,%s,%s,%s,%s,%s\n", $kham_id, $dept_id, $gl_id, $desc_short, $desc_long, $amount, $acct_date, $type);
